@@ -12,33 +12,11 @@ class Game2
 
   # Calculate the score, map the 'rolls' to the frames 
   def score
-    total = 0
-    rolls_to_frames = map_rolls_to_frames
-    
-    rolls_to_frames.each_with_index {|e,i|
-      unless e.last_frame?
-        if e.strike? # strike, grab the next frame
-          next_frame = rolls_to_frames[i+1]
-          if next_frame.last_frame? # last frame, add first two elements
-            total += next_frame.first_two 
-          elsif next_frame.strike? # next frame is a strike, add 'next-next' element
-            total += next_frame.roll_1 + rolls_to_frames[i+2].roll_1
-          else
-            total += next_frame.first_two 
-          end
-        elsif e.spare?
-          total += rolls_to_frames[i+1].roll_1
-        end
-        total += e.first_two
-      else # last frame
-        total += e.last_frame_total
-      end
-    }
-    total
+    map_rolls_to_frames.inject(0) {|a,v| a+ v.frame_total}
   end
 
   # Structure holds the Frame data
-  Frame = Struct.new(:index, :roll_1, :roll_2, :roll_3) do
+  Frame = Struct.new(:index, :roll_1, :roll_2, :roll_3, :next_frame) do
     
     def last_frame?
       index == 10
@@ -56,6 +34,34 @@ class Game2
     def first_two
       roll_1 + roll_2
     end
+
+    # frame total is frame + frame bonus - frame 1..9
+    # frame total is roll 1,2,3 - frame 10
+    def frame_total
+      return last_frame_total if last_frame?
+
+      first_two + frame_bonus
+    end
+
+    # Frame bonus, applies if strike? or spare?, 0 otherwise
+    def frame_bonus
+      return 0 if last_frame?
+      
+      case
+      when strike?
+        if next_frame.last_frame? # last frame, add first two elements
+          next_frame.first_two 
+        elsif next_frame.strike? # next frame is a strike, add 'next-next' element
+          next_frame.roll_1 + next_frame.next_frame.roll_1
+        else
+          next_frame.first_two 
+        end
+      when spare?
+        next_frame.roll_1
+      else
+        0
+      end
+    end
     
     # Frame 10
     def last_frame_total
@@ -66,8 +72,11 @@ class Game2
   private
   # map rolls to the frames
   def map_rolls_to_frames
-    frames = 10.times.map {|i| Frame.new(i+1,0,0,0)}
-
+    frames = 10.times.map {|i| Frame.new(i+1,0,0,0,nil)}
+    # link frames
+    (0...9).each {|i| frames[i].next_frame = frames[i+1]}
+    (0...8).each {|i| raise "Frame #{i} has no next frame!" if frames[i].next_frame.nil?}
+    
     nstrikes = 0 # keep track of the 'strikes'
     @rolls.each_with_index {|e,i|
       
