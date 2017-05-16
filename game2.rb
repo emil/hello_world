@@ -49,7 +49,7 @@ class Game2
     end
 
     def spare?
-      !last_frame? && roll_1 != 0 && (roll_1 + roll_2 == 10)
+      !last_frame? && roll_2 != 0 && (roll_1 + roll_2 == 10)
     end
 
     # Frames 1..9
