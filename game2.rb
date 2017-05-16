@@ -88,7 +88,7 @@ class Game2
         q,r = index_adjusted_by_strikes.divmod(2) # determine frame and the 'roll' index within the frame
         f = frames[q]
         f.send(:"roll_#{r+1}=", e)
-        nstrikes +=1 if e == 10 && !f.last_frame? # advance 'nstrikes' if strike and not the last_frame
+        nstrikes +=1 if f.strike? # advance 'nstrikes' if strike
       end
       
     }
