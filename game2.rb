@@ -1,12 +1,12 @@
 class Game2
-  # a little more 'design' oriented version, slightly heavier though.
-  
+  # https://en.wikipedia.org/wiki/Ten-pin_bowling#Scoring
   def initialize
     @rolls = []
   end
 
   # simply record the rolls pins
   def roll(pins)
+    raise ArgumentError, 'Game Closed' if @rolls.length == 21
     @rolls << pins
   end
 

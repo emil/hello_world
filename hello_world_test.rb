@@ -88,13 +88,34 @@ class HelloWorldTest < MiniTest::Test
     assert_equal 133, g.score
   end
 
-  def test_perfect_score_second_implementation
+  def test_game2_perfect_score
     g = Game2.new
     12.times.each {|i| g.roll 10}
     
     assert_equal 300, g.score
   end
-  
+
+  def test_game2_zero_score
+    g = Game2.new
+    10.times.each {|i| g.roll 0}
+    
+    assert_equal 0, g.score
+  end
+
+  def test_game2_exeeds_rolls_raises
+    g = Game2.new
+    21.times.each {|i| g.roll 0}
+    assert_raises ArgumentError do
+      g.roll 0
+    end
+  end
+
+  def test_game2_all_ones_scores_20
+    g = Game2.new
+    20.times.each {|i| g.roll 1}
+    
+    assert_equal 20, g.score
+  end
 end
 
   
