@@ -117,5 +117,3 @@ class HelloWorldTest < MiniTest::Test
     assert_equal 20, g.score
   end
 end
-
-  
