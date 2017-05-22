@@ -11,19 +11,19 @@ class StringCalculator
 
   def values_sum(numbers)
     delimiters, payload = partition_delimiters_and_the_rest(numbers)
-    r = make_delimiters_regexp(delimiters)
 
-    na = payload.split r
+    numbers = payload.split(make_delimiters_regexp(delimiters))
 
     values = []
-    na.each {|e|
+    numbers.each {|e|
       sv = single_number_value(e)
       return false unless sv
       values << sv if sv <= 1000
     }
     negative_values = values.select {|n| n < 0 }
     raise ArgumentError, "Negative value #{negative_values}" unless negative_values.empty?
-    values.inject(0) {|a,v| a+v}
+    
+    values.reduce(:+)
   end
 
   def single_number_value(numbers)
@@ -37,11 +37,14 @@ class StringCalculator
   def partition_delimiters_and_the_rest(numbers)
     default_delimiters = [',','\n']
     if /\A\/\/(.*?)\\n/ =~ numbers
-      s = $1
+      matched = $1
       rest = $'
-      multiple_delimiters = s.scan /\[.+\]/
-      return [[s] | default_delimiters, rest] if multiple_delimiters.empty?
-      return [multiple_delimiters | default_delimiters, rest]
+      multiple_delimiters = matched.scan /\[.+\]/
+      if multiple_delimiters.any?
+        [multiple_delimiters | default_delimiters, rest]
+      else
+        [[matched] | default_delimiters, rest]
+      end
     else
       [default_delimiters, numbers]
     end
