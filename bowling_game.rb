@@ -1,5 +1,5 @@
 # https://en.wikipedia.org/wiki/Ten-pin_bowling#Scoring
-class Game2
+class BowlingGame
   # Initialize the Game, empty rolls array, and setup the Frames
   def initialize
     @rolls = []
