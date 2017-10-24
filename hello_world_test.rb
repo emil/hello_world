@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require_relative 'game'  # 1st attempt
-require_relative 'game2' # 2nd attempt
+require_relative 'bowling_game' # 2nd attempt
 
 class HelloWorldTest < MiniTest::Test
   def setup
@@ -49,7 +49,7 @@ class HelloWorldTest < MiniTest::Test
   end
   
   def test_second_implementation
-    g = Game2.new
+    g = BowlingGame.new
     g.roll 1
     g.roll 4
     assert_equal 5, g.score
@@ -89,21 +89,21 @@ class HelloWorldTest < MiniTest::Test
   end
 
   def test_game2_perfect_score
-    g = Game2.new
+    g = BowlingGame.new
     12.times.each {|i| g.roll 10}
     
     assert_equal 300, g.score
   end
 
   def test_game2_zero_score
-    g = Game2.new
+    g = BowlingGame.new
     10.times.each {|i| g.roll 0}
     
     assert_equal 0, g.score
   end
 
   def test_game2_exeeds_rolls_raises
-    g = Game2.new
+    g = BowlingGame.new
     21.times.each {|i| g.roll 0}
     assert_raises ArgumentError do
       g.roll 0
@@ -111,7 +111,7 @@ class HelloWorldTest < MiniTest::Test
   end
 
   def test_game2_all_ones_scores_20
-    g = Game2.new
+    g = BowlingGame.new
     20.times.each {|i| g.roll 1}
     
     assert_equal 20, g.score
